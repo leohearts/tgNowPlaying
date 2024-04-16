@@ -34,8 +34,10 @@ async def handler(path):
                         print(_bio)
                         if "▶️Playing" not in _bio:
                             bio = _bio
-
-                    title = req["Title"]
+                    try:
+                        title = req["Title"].split("开始播放 ")[1]
+                    except:
+                        title = req["Title"].split("is playing ")[1]
                     async with client:
                         await client(UpdateProfileRequest(
                             about='▶️Playing ' + title
