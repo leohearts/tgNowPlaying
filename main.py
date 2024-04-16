@@ -14,12 +14,13 @@ async def init():
         bio = full.full_user.about
         print(bio)
 
-asyncio.run(init())
 app = Flask(__name__)
 
 
 @app.route('/<path:path>',methods=['POST'])
 async def handler(path):
+    if bio == "":
+        await init()
     if request.method=='POST':
         req = request.get_json()
         print(req)
