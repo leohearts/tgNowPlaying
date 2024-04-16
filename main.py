@@ -14,9 +14,11 @@ def handler(path):
     if request.method=='POST':
         req = request.get_json()
         print(req)
+        response = Response('{"msg": "ok"}', 500)
+        return response
     else:
         response = Response('{"msg": "Method not allowed"}', 500)
-    return response
+        return response
 
 
 if __name__ == "__main__":
