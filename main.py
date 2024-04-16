@@ -5,22 +5,20 @@ from flask import Flask,request,redirect,Response
 import asyncio
 from settings import api_id, api_hash
 
-# The first parameter is the .session file name (absolute paths allowed)
 bio = ""
-client = TelegramClient('leohearts', api_id, api_hash)
-async def init():
-    async with client:
-        full = await client(GetFullUserRequest('me'))
-        bio = full.full_user.about
-        print(bio)
 
 app = Flask(__name__)
 
 
 @app.route('/<path:path>',methods=['POST'])
 async def handler(path):
+    client = TelegramClient('leohearts', api_id, api_hash)
+    global bio
     if bio == "":
-        await init()
+        async with client:
+            full = await client(GetFullUserRequest('me'))
+            bio = full.full_user.about
+            print(bio)
     if request.method=='POST':
         req = request.get_json()
         print(req)
@@ -28,12 +26,18 @@ async def handler(path):
         if "emby" in path:
             if req["Event"] == "playback.start":
                 try:
+                    async with client:
+                        full = await client(GetFullUserRequest('me'))
+                        _bio = full.full_user.about
+                        print(_bio)
+                        if "▶️Playing" not in _bio:
+                            bio = _bio
                     title = req["Title"].split("开始播放 ")[1]
                     async with client:
                         await client(UpdateProfileRequest(
                             about='▶️Playing ' + title
                         ))
-                    response = Response({"msg": "Updated to %s" % title} , 200)
+                    response = Response(str({"msg": "Updated to %s" % title}) , 200)
                 except Exception as e:
                     print(e)
                     pass
@@ -43,7 +47,7 @@ async def handler(path):
                         await client(UpdateProfileRequest(
                             about=bio
                         ))
-                    response = Response({"msg": "Updated to %s" % bio } , 200)
+                    response = Response(str({"msg": "Updated to %s" % bio }) , 200)
                 except Exception as e:
                     print(e)
                     pass
