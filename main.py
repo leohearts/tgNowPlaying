@@ -17,8 +17,10 @@ async def handler(path):
     if bio == "":
         async with client:
             full = await client(GetFullUserRequest('me'))
-            bio = full.full_user.about
-            print(bio)
+            _bio = full.full_user.about
+            print(_bio)
+            if "▶️Playing" not in _bio:
+                bio = _bio
     if request.method=='POST':
         req = request.get_json()
         print(req)
