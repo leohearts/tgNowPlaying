@@ -28,7 +28,7 @@ def handler(path):
                 except Exception as e:
                     print(e)
                     pass
-            else if req["Event"] == "playback.stop":
+            elif req["Event"] == "playback.stop":
                 try:
                     client(UpdateProfileRequest(
                         about=bio
